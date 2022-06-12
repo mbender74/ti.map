@@ -23,6 +23,115 @@
 #import <TitaniumKit/TiBase.h>
 #import <TitaniumKit/TiUtils.h>
 
+#define MERCATOR_RADIUS 85445659.44705395
+
+@interface TileOverlayRenderer : MKTileOverlayRenderer
+
+@property (nonatomic, retain) UIImage *overlayImage;
+
+- (TileOverlayRenderer *)initWithOverlay:(id<MKOverlay>)overlay overlayImage:(UIImage *)image withProxy:(TiProxy *)proxy;
+
+@end
+
+@implementation TileOverlayRenderer
+
+- (TileOverlayRenderer *)initWithOverlay:(id<MKOverlay>)overlay overlayImage:(UIImage *)image withProxy:(TiProxy *)proxy
+{
+  self = [super initWithOverlay:overlay];
+  if (self) {
+    _overlayImage = image;
+  }
+
+  return self;
+}
+
+- (void)drawMapRect:(MKMapRect)mapRect zoomScale:(MKZoomScale)zoomScale inContext:(CGContextRef)context
+{
+
+  //    CGRect rect = [self rectForMapRect:mapRect];
+  //
+  //
+  //
+  //    CGContextSetStrokeColorWithColor(context, [UIColor blueColor].CGColor);
+  //    CGContextSetLineWidth(context, 1.0/zoomScale);
+  //    CGContextStrokeRect(context, rect);
+  //
+  //    UIGraphicsPushContext(context);
+  //
+  //    [self.overlayImage drawInRect:rect];
+  //
+  //    UIGraphicsPopContext();
+
+  [super drawMapRect:mapRect zoomScale:zoomScale inContext:context];
+
+  //    CGContextSaveGState(context);
+  //    CGContextTranslateCTM(context, CGRectGetMinX(rect), CGRectGetMinY(rect));
+  //    CGContextScaleCTM(context, 1/zoomScale, 1/zoomScale);
+  //    CGContextTranslateCTM(context, 0, self.overlayImage.size.height);
+  //    CGContextScaleCTM(context, 1, -1);
+  //    CGContextDrawImage(context, CGRectMake(0, 0, self.overlayImage.size.width, self.overlayImage.size.height), [self.overlayImage CGImage]);
+  //    CGContextRestoreGState(context);
+  //
+
+  //[super drawMapRect:mapRect zoomScale:zoomScale inContext:context];
+  //
+  //
+  ////    TiThreadPerformOnMainThread(
+  ////        ^{
+  //            if (self.overlayImage != nil) {
+  //
+  //
+  //                CGRect rect = [self rectForMapRect:mapRect];
+  //
+  //
+  ////                CGContextSaveGState(context);
+  ////                CGContextTranslateCTM(context, CGRectGetMinX(rect), CGRectGetMinY(rect));
+  ////                CGContextScaleCTM(context, 1/zoomScale, 1/zoomScale);
+  ////                CGContextTranslateCTM(context, 0, self.overlayImage.size.height);
+  ////                CGContextScaleCTM(context, 1, -1);
+  ////                CGContextDrawImage(context, CGRectMake(0, 0, self.overlayImage.size.width, self.overlayImage.size.height), [self.overlayImage CGImage]);
+  ////                CGContextRestoreGState(context);
+  //
+  //
+  //                CGImageRef imageReference = self.overlayImage.CGImage;
+  //
+  //                MKMapRect theMapRect = self.overlay.boundingMapRect;
+  //                CGRect theRect = [self rectForMapRect:theMapRect];
+  //
+  //                CGContextScaleCTM(context, 1.0, -1.0);
+  //                CGContextTranslateCTM(context, 0.0, -theRect.size.height);
+  //
+  ////                CGContextDrawImage(context, CGRectMake(0, 0, self.overlayImage.size.width, self.overlayImage.size.height), imageReference);
+  //
+  //
+  //                CGContextDrawImage(context, theRect, imageReference);
+  //            }
+  ////        },
+  ////        NO);
+  //
+
+  //    CGRect rect = CGRectMake(0.0f, 0.0f, 256.0f, 256.0f);
+  //    UIGraphicsBeginImageContext(rect.size);
+  //    CGContextRef contextImg = UIGraphicsGetCurrentContext();
+  //    CGContextSetFillColorWithColor(contextImg, [[UIColor darkGrayColor] CGColor]);
+  //    CGContextFillRect(contextImg, rect);
+  //
+  //    UIImage *image = UIGraphicsGetImageFromCurrentImageContext();
+  //    UIGraphicsEndImageContext();
+  //
+  //    CGContextSaveGState(context);
+  //    CGContextTranslateCTM(context, CGRectGetMinX(rect), CGRectGetMinY(rect));
+  //    CGContextScaleCTM(context, 1/zoomScale, 1/zoomScale);
+  //    CGContextTranslateCTM(context, 0, image.size.height);
+  //    CGContextScaleCTM(context, 1, -1);
+  //    CGContextDrawImage(context, CGRectMake(0, 0, image.size.width, image.size.height), [image CGImage]);
+  //    CGContextRestoreGState(context);
+  //
+  //    [super drawMapRect:mapRect zoomScale:zoomScale inContext:context];
+}
+
+@end
+
 @implementation TiMapView
 
 CLLocationCoordinate2D userNewLocation;
@@ -50,6 +159,11 @@ CLLocationCoordinate2D userNewLocation;
   [super dealloc];
 }
 
+- (void)resetRender
+{
+  [tileRender reloadData];
+}
+
 - (void)render
 {
   if (![NSThread isMainThread]) {
@@ -66,10 +180,15 @@ CLLocationCoordinate2D userNewLocation;
   }
 
   if (region.center.latitude != 0 && region.center.longitude != 0 && !isnan(region.center.latitude) && !isnan(region.center.longitude)) {
-    if (regionFits) {
+    if (regionFits == YES) {
       [map setRegion:[map regionThatFits:region] animated:animate];
     } else {
       [map setRegion:region animated:animate];
+    }
+    if (zoom != -1) {
+      ignoreRegionChanged = YES;
+      [self setZoomLevel:[NSNumber numberWithFloat:zoom] animated:NO];
+      ignoreRegionChanged = YES;
     }
   }
 }
@@ -77,14 +196,17 @@ CLLocationCoordinate2D userNewLocation;
 - (MKMapView *)map
 {
   if (map == nil) {
+    zoom = -1;
     map = [[MKMapView alloc] initWithFrame:CGRectZero];
     map.delegate = self;
+    maxBoundsSet = NO;
     map.userInteractionEnabled = YES;
     map.autoresizingMask = UIViewAutoresizingNone;
-
     [self addSubview:map];
+
     mapObjects2View = CFDictionaryCreateMutable(NULL, 10, &kCFTypeDictionaryKeyCallBacks, &kCFTypeDictionaryValueCallBacks);
     [self registerTouchEvents];
+    regionFits = NO;
     //Initialize loaded state to YES. This will automatically go to NO if the map needs to download new data
     loaded = YES;
   }
@@ -188,6 +310,18 @@ CLLocationCoordinate2D userNewLocation;
 - (TiMapAnnotationProxy *)annotationFromArg:(id)arg
 {
   return [(TiMapViewProxy *)[self proxy] annotationFromArg:arg];
+}
+
+- (NSArray *)annotationsFromGeoJSON:(id)value
+{
+  ENSURE_TYPE_OR_NIL(value, NSArray);
+  NSMutableArray *result = [NSMutableArray arrayWithCapacity:[value count]];
+  if (value != nil) {
+    for (id arg in value) {
+      [result addObject:[self annotationFromArg:arg]];
+    }
+  }
+  return result;
 }
 
 - (NSArray *)annotationsFromArgs:(id)value
@@ -308,7 +442,34 @@ CLLocationCoordinate2D userNewLocation;
 - (void)removeAllAnnotations:(id)args
 {
   ENSURE_UI_THREAD(removeAllAnnotations, args);
-  [self.map removeAnnotations:self.customAnnotations];
+
+  for (id<MKAnnotation> an in self.customAnnotations) {
+
+    if (![an isKindOfClass:[MKPointAnnotation class]] && ![an isKindOfClass:[MKPolyline class]] && ![an isKindOfClass:[MKPolygon class]]) {
+
+      if (![geoJSONProxies containsObject:an]) {
+        [self.map removeAnnotation:an];
+      }
+    }
+  }
+}
+
+- (void)removeAllGeoJSON:(id)args
+{
+  ENSURE_UI_THREAD(removeAllGeoJSON, args);
+
+  for (MKPointAnnotation *an in geoJSONProxies) {
+    [self.map removeAnnotation:an];
+    [geoJSONProxies removeObject:an];
+  }
+  for (MKPolyline *an in geoJSONProxies) {
+    [self.map removeAnnotation:an];
+    [geoJSONProxies removeObject:an];
+  }
+  for (MKPolygon *an in geoJSONProxies) {
+    [self.map removeAnnotation:an];
+    [geoJSONProxies removeObject:an];
+  }
 }
 
 - (void)setAnnotations_:(id)value
@@ -372,6 +533,28 @@ CLLocationCoordinate2D userNewLocation;
   }
 }
 
+- (CLLocationCoordinate2D)regionCenter
+{
+  return region.center;
+}
+
+- (void)setZoomLevel:(id)args animated:(BOOL)animated
+{
+  ENSURE_SINGLE_ARG(args, NSObject);
+
+  double v = [TiUtils doubleValue:args];
+  // TODO: Find a good delta tolerance value to deal with floating point goofs
+  if (v == 0.0) {
+    return;
+  }
+
+  float pixelPerTile = 256.0;
+  float degreePerTile = 360.0 / pow(2, v);
+  float numTilesThisScreen = self.frame.size.width / pixelPerTile;
+  region = MKCoordinateRegionMake([[self map] region].center, MKCoordinateSpanMake(0, degreePerTile * numTilesThisScreen));
+  [map setRegion:region animated:animated];
+}
+
 - (void)zoom:(id)args
 {
   ENSURE_SINGLE_ARG(args, NSObject);
@@ -397,6 +580,10 @@ CLLocationCoordinate2D userNewLocation;
 
 - (MKCoordinateRegion)regionFromDict:(NSDictionary *)dict
 {
+  if ([dict objectForKey:@"zoomLevel"]) {
+    zoom = [TiUtils doubleValue:@"zoomLevel" properties:dict];
+  }
+
   CGFloat latitudeDelta = [TiUtils floatValue:@"latitudeDelta" properties:dict];
   CGFloat longitudeDelta = [TiUtils floatValue:@"longitudeDelta" properties:dict];
   CLLocationCoordinate2D center;
@@ -406,9 +593,36 @@ CLLocationCoordinate2D userNewLocation;
   MKCoordinateSpan span;
   span.longitudeDelta = longitudeDelta;
   span.latitudeDelta = latitudeDelta;
+
+  self.lastDelta = span;
   region_.center = center;
   region_.span = span;
   return region_;
+}
+
+- (MKCoordinateRegion)maxRegionFromDictCenter:(NSDictionary *)dict
+{
+  CGFloat latMeters = [TiUtils floatValue:@"verticalMeters" properties:dict];
+  CGFloat longMeters = [TiUtils floatValue:@"horizontalMeters" properties:dict];
+
+  CLLocationCoordinate2D center;
+  center.latitude = [TiUtils floatValue:@"centerLatitude" properties:dict];
+  center.longitude = [TiUtils floatValue:@"centerLongitude" properties:dict];
+
+  MKCoordinateRegion maxRegion = MKCoordinateRegionMakeWithDistance(center, latMeters, longMeters);
+  return maxRegion;
+}
+
+- (NSString *)maxRegionFromDict:(NSDictionary *)dict
+{
+  maxBoundsSet = YES;
+  maxLat = [TiUtils floatValue:@"maxLatitude" properties:dict];
+  minLat = [TiUtils floatValue:@"minLatitude" properties:dict];
+  maxLong = [TiUtils floatValue:@"maxLongitude" properties:dict];
+  minLong = [TiUtils floatValue:@"minLongitude" properties:dict];
+
+  NSString *box = [NSString stringWithFormat:@"%f,%f,%f,%f", minLong, minLat, maxLong, maxLat];
+  return box;
 }
 
 - (NSDictionary *)dictionaryFromRegion
@@ -442,9 +656,147 @@ CLLocationCoordinate2D userNewLocation;
 
 #pragma mark Public APIs
 
+- (void)setOfflineOverlay_:(id)args
+{
+  ENSURE_SINGLE_ARG(args, NSDictionary);
+
+  if ([args objectForKey:@"tilesPath"]) {
+    NSString *mapPath = [TiUtils stringValue:[args objectForKey:@"tilesPath"]];
+    NSString *tileDirectory = [[[NSBundle mainBundle] resourcePath] stringByAppendingPathComponent:mapPath];
+    CGFloat tileSize = [TiUtils floatValue:[args objectForKey:@"tileSize"] def:256];
+
+    tileOverlay = [[TileOverlay alloc] initWithTileDirectory:tileDirectory fileExtension:[TiUtils stringValue:[args objectForKey:@"tileExtension"]] tileSize:tileSize];
+
+    if (tileOverlay != nil) {
+      if ([args objectForKey:@"canReplaceMapContent"]) {
+        if ([TiUtils boolValue:[args objectForKey:@"canReplaceMapContent"]] == YES) {
+          MBTileOverlay *mkTileOverlay = [[MBTileOverlay alloc] init];
+          mkTileOverlay.tileSize = CGSizeMake(64, 64);
+          TileOverlayRenderer *MBTileRender;
+
+          if ([args objectForKey:@"contentReplaceImage"]) {
+            [mkTileOverlay setOverlayImage:[TiUtils image:[args objectForKey:@"contentReplaceImage"] proxy:self.proxy]];
+          }
+
+          mkTileOverlay.canReplaceMapContent = YES;
+
+          if ([args objectForKey:@"contentReplaceImage"]) {
+            MBTileRender = [[TileOverlayRenderer alloc] initWithOverlay:mkTileOverlay overlayImage:[TiUtils image:[args objectForKey:@"contentReplaceImage"] proxy:self.proxy] withProxy:self.proxy];
+          } else {
+            MBTileRender = [[TileOverlayRenderer alloc] initWithOverlay:mkTileOverlay];
+          }
+
+          CFDictionaryAddValue(mapObjects2View, mkTileOverlay, MBTileRender);
+          [[self map] addOverlay:mkTileOverlay];
+        }
+      }
+      TileOverlayView *renderer = [[TileOverlayView alloc] initWithOverlay:tileOverlay];
+      [renderer setProxy:self.proxy];
+      CFDictionaryAddValue(mapObjects2View, tileOverlay, renderer);
+      [[self map] addOverlay:tileOverlay];
+
+      if ([args objectForKey:@"minCenterCoordinateDistance"] != nil && [args objectForKey:@"maxCenterCoordinateDistance"] != nil) {
+
+        CLLocationDistance min = [TiUtils intValue:[args objectForKey:@"minCenterCoordinateDistance"] def:500];
+        CLLocationDistance max = [TiUtils intValue:[args objectForKey:@"maxCenterCoordinateDistance"] def:1800];
+        ignoreRegionChanged = YES;
+        zoomRange = [[MKMapCameraZoomRange alloc] initWithMinCenterCoordinateDistance:min maxCenterCoordinateDistance:max];
+        [[self map] setCameraZoomRange:zoomRange animated:NO];
+        ignoreRegionChanged = NO;
+      }
+
+      //            if ([args objectForKey:@"maxRegion"]!= nil){
+      //                MKMapCameraBoundary *boundery = [[MKMapCameraBoundary alloc] initWithCoordinateRegion:[self regionForBBoxInString:[self maxRegionFromDict:[args objectForKey:@"maxRegion"]]]];
+      //                [[self map] setCameraBoundary:boundery animated:NO];
+      //            }
+
+      if ([args objectForKey:@"maxRegion"] != nil) {
+        ignoreRegionChanged = YES;
+        MKMapCameraBoundary *boundery = [[MKMapCameraBoundary alloc] initWithCoordinateRegion:[self maxRegionFromDictCenter:[args objectForKey:@"maxRegion"]]];
+        [[self map] setCameraBoundary:boundery animated:NO];
+        if (zoom != -1) {
+          [self setZoomLevel:[NSNumber numberWithFloat:zoom] animated:NO];
+        }
+        ignoreRegionChanged = NO;
+        maxBoundsSet = YES;
+      }
+    }
+  }
+}
+
+- (void)setGeoJSON_:(id)args
+{
+  ENSURE_SINGLE_ARG(args, NSDictionary);
+
+  NSData *data;
+
+  if ([args objectForKey:@"jsonContent"]) {
+    NSDictionary *jsonData = [args objectForKey:@"jsonContent"];
+    NSError *error;
+
+    if (jsonData != nil) {
+      data = [NSJSONSerialization dataWithJSONObject:jsonData options:0 error:&error];
+    } else {
+      data = nil;
+    }
+  } else if ([args objectForKey:@"jsonFilePath"]) {
+    NSString *jsonPath = [TiUtils stringValue:[args objectForKey:@"jsonFilePath"]];
+
+    NSURL *url = [TiUtils toURL:jsonPath proxy:self.proxy];
+
+    data = [NSData dataWithContentsOfURL:url];
+  } else {
+    data = nil;
+  }
+
+  if (data != nil) {
+
+    NSDictionary *geoJSON = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+    NSArray *shapes = [GeoJSONSerialization shapesFromGeoJSONFeatureCollection:geoJSON error:nil];
+
+    for (MKShape *shape in shapes) {
+      if ([shape isKindOfClass:[MKPointAnnotation class]]) {
+        [[self map] addAnnotation:shape];
+      } else if ([shape isKindOfClass:[MKPolygon class]]) {
+        MKOverlayRenderer *renderer = nil;
+        renderer = [[MKPolygonRenderer alloc] initWithPolygon:(MKPolygon *)shape];
+        ((MKPolygonRenderer *)renderer).strokeColor = [[TiUtils colorValue:[args objectForKey:@"strokeColorPolygon"]] color];
+        ((MKPolygonRenderer *)renderer).fillColor = [[TiUtils colorValue:[args objectForKey:@"fillColorPolygon"]] color];
+        ((MKPolygonRenderer *)renderer).lineWidth = [TiUtils floatValue:[args objectForKey:@"lineWidthPolygon"]];
+        renderer.alpha = [TiUtils floatValue:[args objectForKey:@"alphaValuePolygon"]];
+        CFDictionaryAddValue(mapObjects2View, shape, renderer);
+        [[self map] addOverlay:(id<MKOverlay>)shape];
+      } else if ([shape isKindOfClass:[MKPolyline class]]) {
+        MKOverlayRenderer *renderer = nil;
+        renderer = [[MKPolylineRenderer alloc] initWithPolyline:(MKPolyline *)shape];
+        ((MKPolylineRenderer *)renderer).strokeColor = [[TiUtils colorValue:[args objectForKey:@"strokeColorPolyLine"]] color];
+        ((MKPolylineRenderer *)renderer).lineWidth = [TiUtils floatValue:[args objectForKey:@"lineWidthPolyLine"]];
+        renderer.alpha = [TiUtils floatValue:[args objectForKey:@"alphaValuePolyLine"]];
+        CFDictionaryAddValue(mapObjects2View, shape, renderer);
+        [[self map] addOverlay:(id<MKOverlay>)shape];
+      }
+      [geoJSONProxies addObject:shape];
+
+      //            else if ([shape conformsToProtocol:@protocol(MKOverlay)]) {
+      //                [[self map] addOverlay:(id <MKOverlay>)shape];
+      //            }
+    }
+  }
+}
+
 - (void)setMapType_:(id)value
 {
   [[self map] setMapType:[TiUtils intValue:value]];
+}
+
+- (void)setCenter_:(id)args
+{
+  ENSURE_SINGLE_ARG(args, NSDictionary);
+  CLLocationCoordinate2D center;
+  center.latitude = [TiUtils floatValue:@"latitude" properties:args];
+  center.longitude = [TiUtils floatValue:@"longitude" properties:args];
+  [[self map] setCenterCoordinate:center];
+  [self render];
 }
 
 - (void)setRegion_:(id)value
@@ -473,7 +825,25 @@ CLLocationCoordinate2D userNewLocation;
 - (void)setRegionFit_:(id)value
 {
   regionFits = [TiUtils boolValue:value];
+
+  id offlineOverlay = [self.proxy valueForKey:@"offlineOverlay"];
+  if (offlineOverlay != nil) {
+    NSLog(@"offlineOverlay set - setRegion");
+
+    id maxRegion = [(NSDictionary *)offlineOverlay objectForKey:@"maxRegion"];
+    if (maxRegion != nil) {
+      NSLog(@"maxRegion set - setRegion");
+
+      regionFits = NO;
+    }
+  }
+
   [self render];
+}
+
+- (NSInteger)zoomLevel
+{
+  return 21 - round(log2([self map].region.span.longitudeDelta * MERCATOR_RADIUS * M_PI / (180.0 * self.bounds.size.width)));
 }
 
 - (void)setUserLocation_:(id)value
@@ -531,6 +901,18 @@ CLLocationCoordinate2D userNewLocation;
   id rf = [location objectForKey:@"regionFit"];
   if (rf) {
     regionFits = [rf boolValue];
+
+    id offlineOverlay = [self.proxy valueForKey:@"offlineOverlay"];
+    if (offlineOverlay != nil) {
+      NSLog(@"offlineOverlay set - setLocation");
+
+      id maxRegion = [(NSDictionary *)offlineOverlay objectForKey:@"maxRegion"];
+      if (maxRegion != nil) {
+        NSLog(@"maxRegion set - setLocation");
+
+        regionFits = NO;
+      }
+    }
   }
   [self render];
 }
@@ -947,6 +1329,17 @@ CLLocationCoordinate2D userNewLocation;
   return [clusterAnnotations objectForKey:members];
 }
 
+- (MKMapRect)MKMapRectForCoordinateRegion:(MKCoordinateRegion)region
+{
+  MKMapPoint a = MKMapPointForCoordinate(CLLocationCoordinate2DMake(
+      region.center.latitude + region.span.latitudeDelta / 2,
+      region.center.longitude - region.span.longitudeDelta / 2));
+  MKMapPoint b = MKMapPointForCoordinate(CLLocationCoordinate2DMake(
+      region.center.latitude - region.span.latitudeDelta / 2,
+      region.center.longitude + region.span.longitudeDelta / 2));
+  return MKMapRectMake(MIN(a.x, b.x), MIN(a.y, b.y), ABS(a.x - b.x), ABS(a.y - b.y));
+}
+
 #pragma mark Utils
 
 // These methods override the default implementation in TiMapView
@@ -982,6 +1375,38 @@ CLLocationCoordinate2D userNewLocation;
   }
 }
 
+- (void)updateDynamicPaddedBounds
+{
+  CLLocationCoordinate2D northWestPoint = CLLocationCoordinate2DMake(minLat, minLong);
+  CLLocationCoordinate2D southEastPoint = CLLocationCoordinate2DMake(maxLat, maxLong);
+
+  MKMapPoint upperLeft = MKMapPointForCoordinate(northWestPoint);
+  MKMapPoint lowerRight = MKMapPointForCoordinate(southEastPoint);
+  double width = lowerRight.x - upperLeft.x;
+  double height = lowerRight.y - upperLeft.y;
+
+  MKMapRect mRect = [self map].visibleMapRect;
+  MKMapPoint eastMapPoint = MKMapPointMake(MKMapRectGetMinX(mRect), MKMapRectGetMidY(mRect));
+  MKMapPoint westMapPoint = MKMapPointMake(MKMapRectGetMaxX(mRect), MKMapRectGetMidY(mRect));
+  MKMapPoint northMapPoint = MKMapPointMake(MKMapRectGetMidX(mRect), MKMapRectGetMaxY(mRect));
+  MKMapPoint southMapPoint = MKMapPointMake(MKMapRectGetMidX(mRect), MKMapRectGetMinY(mRect));
+
+  double xMidDist = fabs(eastMapPoint.x - westMapPoint.x) / 2;
+  double yMidDist = fabs(northMapPoint.y - southMapPoint.y) / 2;
+
+  upperLeft.x = upperLeft.x + xMidDist;
+  upperLeft.y = upperLeft.y + yMidDist;
+
+  double paddedWidth = width - (xMidDist * 2);
+  double paddedHeight = height - (yMidDist * 2);
+
+  paddedBoundingMapRect = MKMapRectMake(upperLeft.x, upperLeft.y, paddedWidth, paddedHeight);
+
+  NSLog(@"");
+  NSLog(@"[WARN] paddedBoundingMapRect: %@", paddedBoundingMapRect);
+  NSLog(@"");
+}
+
 - (void)mapView:(MKMapView *)mapView regionDidChangeAnimated:(BOOL)animated
 {
   if (animated && cameraAnimationCallback != nil) {
@@ -992,6 +1417,143 @@ CLLocationCoordinate2D userNewLocation;
   if (ignoreRegionChanged) {
     return;
   }
+
+  if (maxBoundsSet == YES) {
+
+    if (ignoreRegionChanged) {
+      return;
+    }
+
+    BOOL mapContainsOverlay = MKMapRectContainsRect(mapView.visibleMapRect, [(id<MKOverlay>)tileOverlay boundingMapRect]);
+
+    if (mapContainsOverlay) {
+
+      NSLog(@"[WARN] regionDidChangeAnimated ");
+
+      // The overlay is entirely inside the map view but adjust if user is zoomed out too much...
+      double widthRatio = [(id<MKOverlay>)tileOverlay boundingMapRect].size.width / mapView.visibleMapRect.size.width;
+      double heightRatio = [(id<MKOverlay>)tileOverlay boundingMapRect].size.height / mapView.visibleMapRect.size.height;
+      NSLog(@"[WARN] adjust: %f %f ", widthRatio, heightRatio);
+
+      // adjust ratios as needed
+      if ((widthRatio < 0.6) || (heightRatio < 0.6)) {
+
+        NSLog(@"[WARN] adjust");
+
+        ignoreRegionChanged = YES;
+
+        //                MKMapRect visibleRect = [[self map] mapRectThatFits:[tileOverlay boundingMapRect]];
+        //
+        //                visibleRect.size.width /= 2;
+        //                visibleRect.size.height /= 2;
+        //                visibleRect.origin.x += visibleRect.size.width / 2;
+        //                visibleRect.origin.y += visibleRect.size.height / 2;
+        //
+        //                [self map].visibleMapRect = visibleRect;
+        //                lastGoodMapRect = [self map].visibleMapRect;
+        //
+        //
+        //                [mapView setVisibleMapRect:[(id <MKOverlay>)tileOverlay boundingMapRect] animated:NO];
+        ignoreRegionChanged = NO;
+      }
+    }
+    //            else if (![(id <MKOverlay>)tileOverlay intersectsMapRect:mapView.visibleMapRect]) {
+    //            // Overlay is no longer visible in the map view.
+    //            // Reset to last "good" map rect...
+    //            manuallyChangingMapRect = YES;
+    //            [mapView setVisibleMapRect:lastGoodMapRect animated:YES];
+    //            manuallyChangingMapRect = NO;
+    //        }
+    else {
+
+      NSLog(@"[WARN] noOverlay");
+
+      MKMapRect mapRect = mapView.visibleMapRect;
+      CLLocationDistance metersPerMapPoint = MKMetersPerMapPointAtLatitude([mapView region].center.latitude);
+
+      CGFloat metersPerPixel = metersPerMapPoint * mapRect.size.width / mapView.bounds.size.width;
+
+      lastGoodMapRect = mapView.visibleMapRect;
+    }
+
+    //        [self updateDynamicPaddedBounds];
+    //
+    //        MKMapPoint pt =  MKMapPointForCoordinate( mapView.centerCoordinate);
+    //
+    //        BOOL mapInsidePaddedBoundingRect = MKMapRectContainsPoint(paddedBoundingMapRect,pt );
+    //
+    //        if (!mapInsidePaddedBoundingRect)
+    //        {
+    //            // Overlay is no longer visible in the map view.
+    //            // Reset to last "good" map rect...
+    //
+    //            ignoreRegionChanged = YES;
+    //
+    //            MKMapRect visibleRect = [[self map] mapRectThatFits:[tileOverlay boundingMapRect]];
+    //
+    //            visibleRect.size.width /= 2;
+    //            visibleRect.size.height /= 2;
+    //            visibleRect.origin.x += visibleRect.size.width / 2;
+    //            visibleRect.origin.y += visibleRect.size.height / 2;
+    //
+    //            [self map].visibleMapRect = visibleRect;
+    //            lastGoodMapRect = [self map].visibleMapRect;
+    //
+    //           // [mapView setVisibleMapRect:lastGoodMapRect animated:YES];
+    //            ignoreRegionChanged = NO;
+    //
+    //        }
+    //        else {
+    //          //  lastGoodMapRect = mapView.visibleMapRect;
+    //        }
+  }
+
+  //
+  //
+  //    if (self.constraintMap) {
+  //        // prevents possible infinite recursion when we call setVisibleMapRect below
+  //        if (self.manuallyChangingMapRect) {
+  //            return;
+  //        }
+  //
+  //        MKMapRect boundingMapRect = [self MKMapRectForCoordinateRegion:mapView.region];
+  //
+  //
+  //        BOOL mapContainsOverlay = MKMapRectContainsRect(mapView.visibleMapRect, boundingMapRect);
+  //
+  //        if (mapContainsOverlay) {
+  //            // The overlay is entirely inside the map view but adjust if user is zoomed out too much...
+  ////            double widthRatio = boundingMapRect.size.width / mapView.visibleMapRect.size.width;
+  ////            double heightRatio = boundingMapRect.size.height / mapView.visibleMapRect.size.height;
+  //            // adjust ratios as needed
+  //            if (mapView.zoomLevel <= mapView.minZoom - 1) {
+  ////            if ((widthRatio < 0.6) || (heightRatio < 0.6)) {
+  //                self.manuallyChangingMapRect = YES;
+  //                [mapView setRegion:mapView.region animated:YES];
+  //                //[mapView setVisibleMapRect:boundingMapRect animated:NO];
+  ////                CLLocationCoordinate2D currentCenter = mapView.region.center;
+  ////                [mapView setCenterCoordinate:currentCenter zoomLevel:mapView.minZoom-1 animated:YES];
+  //                self.manuallyChangingMapRect = NO;
+  //            }
+  //        } else if (!MKMapRectContainsRect(boundingMapRect, mapView.visibleMapRect)) {
+  //            // Some part of uncovered region is shown.
+  //            // Reset to last "good" map rect...
+  //            self.manuallyChangingMapRect = YES;
+  //            [mapView setVisibleMapRect:self.lastGoodMapRect animated:YES];
+  //            self.manuallyChangingMapRect = NO;
+  //        } else if (mapView.zoomLevel > mapView.maxZoom + 1) {
+  //            // Zoom in too much, re-adjust to maximum zoom + 1 (which still shows)
+  //            self.manuallyChangingMapRect = YES;
+  //            CLLocationCoordinate2D currentCenter = mapView.region.center;
+  //            [mapView setCenterCoordinate:currentCenter zoomLevel:mapView.maxZoom+1 animated:YES];
+  //            self.manuallyChangingMapRect = NO;
+  //        } else {
+  //            self.lastGoodMapRect = mapView.visibleMapRect;
+  //        }
+  //    } else {
+  //        self.lastGoodMapRect = mapView.visibleMapRect;
+  //    }
+  //
 
   region = [mapView region];
   [self.proxy replaceValue:[self dictionaryFromRegion] forKey:@"region" notification:NO];
@@ -1032,6 +1594,48 @@ CLLocationCoordinate2D userNewLocation;
     [self.proxy fireEvent:@"error" withObject:event errorCode:[error code] message:message];
   }
 }
+
+//- (void)checkRegionWithDelta:(float)delta {
+//if ([self map].region.span.longitudeDelta < delta) {
+//        MKCoordinateRegion region = [self map].region;
+//        region.span = self.lastDelta;
+//        [[self map] setRegion:region animated:NO];
+//    }
+//    else if ([self map].region.span.longitudeDelta > delta) {
+//        self.isMaxed = NO;
+//    }
+//}
+
+//- (void)mapViewDidFinishRenderingMap:(MKMapView *)mapView fullyRendered:(BOOL)fullyRendered {
+//    if (mapView.mapType != MKMapTypeStandard && !self.isMaxed) {
+//        [self checkToProcess:self.lastDelta.longitudeDelta];
+//    }
+//}
+
+//- (void)checkToProcess:(float)delta {
+//    if ([self map].region.span.longitudeDelta < delta) {
+//        UIGraphicsBeginImageContext([self map].bounds.size);
+//        [[self map].layer renderInContext:UIGraphicsGetCurrentContext()];
+//        UIImage *mapImage = UIGraphicsGetImageFromCurrentImageContext();
+//        [self processImage:mapImage];
+//    }
+//}
+//
+//- (void)processImage:(UIImage *)image {
+//    self.mapColor = [self averageColor:image];
+//    const CGFloat* colors = CGColorGetComponents( self.mapColor.CGColor );
+//    [self handleColorCorrection:colors[0]];
+//}
+//
+//
+//- (void)handleColorCorrection:(float)redColor {
+//    if (redColor < 0.29) {
+//        self.isMaxed = YES;
+//        [[self map] setRegion:MKCoordinateRegionMake([self map].centerCoordinate, self.lastDelta) animated:YES];
+//    } else {
+//        self.lastDelta = [self map].region.span;
+//    }
+//}
 
 - (void)mapView:(MKMapView *)mapView annotationView:(MKAnnotationView *)annotationView didChangeDragState:(MKAnnotationViewDragState)newState fromOldState:(MKAnnotationViewDragState)oldState
 {
@@ -1571,6 +2175,16 @@ CLLocationCoordinate2D userNewLocation;
   coordinate.longitude = [TiUtils doubleValue:args[@"longitude"]];
 
   return @(MKMapRectContainsPoint(self.map.visibleMapRect, MKMapPointForCoordinate(coordinate)));
+}
+
+- (MKCoordinateRegion)regionForBBoxInString:(NSString *)bboxInString
+{
+  NSMutableArray *arrayOfCoords = [bboxInString tokenizeByString:@","];
+  OSMBoundingBox bbox = OSMBoundingBoxMake([arrayOfCoords[0] doubleValue],
+      [arrayOfCoords[1] doubleValue],
+      [arrayOfCoords[2] doubleValue],
+      [arrayOfCoords[3] doubleValue]);
+  return [RegionBBoxConverter regionFromBBox:bbox];
 }
 
 @end

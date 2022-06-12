@@ -35,6 +35,22 @@
 		27A609EA19F5927000CA150A /* WildcardGestureRecognizer.m in Sources */ = {isa = PBXBuildFile; fileRef = 27A609E919F5927000CA150A /* WildcardGestureRecognizer.m */; };
 		27A609EC19F5B84000CA150A /* TiMapCircleProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 27A609EB19F5B84000CA150A /* TiMapCircleProxy.m */; };
 		27A609F019F711B700CA150A /* TiMapPolylineProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 27A609EF19F711B700CA150A /* TiMapPolylineProxy.m */; };
+		2C18A322284EF9EE0083EA45 /* GeoJSONSerialization.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C18A320284EF9EE0083EA45 /* GeoJSONSerialization.h */; };
+		2C18A323284EF9EE0083EA45 /* GeoJSONSerialization.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C18A321284EF9EE0083EA45 /* GeoJSONSerialization.m */; };
+		2C32B874284F8F4F00F89176 /* TileOverlay.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C32B870284F8F4D00F89176 /* TileOverlay.m */; };
+		2C32B875284F8F4F00F89176 /* TileOverlayView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C32B871284F8F4D00F89176 /* TileOverlayView.h */; };
+		2C32B876284F8F4F00F89176 /* TileOverlay.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C32B872284F8F4E00F89176 /* TileOverlay.h */; };
+		2C32B877284F8F4F00F89176 /* TileOverlayView.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C32B873284F8F4E00F89176 /* TileOverlayView.m */; };
+		2C32B886285203C900F89176 /* mkgeometry_additions.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C32B882285203C900F89176 /* mkgeometry_additions.m */; };
+		2C32B888285203C900F89176 /* mkgeometry_additions.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C32B884285203C900F89176 /* mkgeometry_additions.h */; };
+		2C32B8962852221900F89176 /* RegionBBoxConverter.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C32B8942852221900F89176 /* RegionBBoxConverter.m */; };
+		2C32B89C2852225100F89176 /* NSMutableArray+TrimWhiteSpace.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C32B8972852225000F89176 /* NSMutableArray+TrimWhiteSpace.m */; };
+		2C32B89D2852225100F89176 /* NSString+Tokenize.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C32B8982852225000F89176 /* NSString+Tokenize.h */; };
+		2C32B89E2852225100F89176 /* NSMutableArray+TrimWhiteSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C32B8992852225100F89176 /* NSMutableArray+TrimWhiteSpace.h */; };
+		2C32B89F2852225100F89176 /* NSString+Tokenize.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C32B89A2852225100F89176 /* NSString+Tokenize.m */; };
+		2C32B8A02852225100F89176 /* RegionBBoxConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C32B89B2852225100F89176 /* RegionBBoxConverter.h */; };
+		2C32B8A32852B14B00F89176 /* MapTile.h in Headers */ = {isa = PBXBuildFile; fileRef = 2C32B8A12852B14A00F89176 /* MapTile.h */; };
+		2C32B8A42852B14B00F89176 /* MapTile.m in Sources */ = {isa = PBXBuildFile; fileRef = 2C32B8A22852B14A00F89176 /* MapTile.m */; };
 		815136F31D355BF5009E3E2C /* TiMapSnapshotterProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 815136F11D355BF5009E3E2C /* TiMapSnapshotterProxy.h */; };
 		815136F41D355BF5009E3E2C /* TiMapSnapshotterProxy.m in Sources */ = {isa = PBXBuildFile; fileRef = 815136F21D355BF5009E3E2C /* TiMapSnapshotterProxy.m */; };
 		AA747D9F0F9514B9006C5449 /* TiMap_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = AA747D9E0F9514B9006C5449 /* TiMap_Prefix.pch */; };
@@ -94,6 +110,22 @@
 		27A609ED19F5B85900CA150A /* TiMapCircleProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TiMapCircleProxy.h; path = Classes/TiMapCircleProxy.h; sourceTree = "<group>"; };
 		27A609EE19F7112C00CA150A /* TiMapPolylineProxy.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = TiMapPolylineProxy.h; path = Classes/TiMapPolylineProxy.h; sourceTree = "<group>"; };
 		27A609EF19F711B700CA150A /* TiMapPolylineProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiMapPolylineProxy.m; path = Classes/TiMapPolylineProxy.m; sourceTree = "<group>"; };
+		2C18A320284EF9EE0083EA45 /* GeoJSONSerialization.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = GeoJSONSerialization.h; path = Classes/GeoJSONSerialization.h; sourceTree = "<group>"; };
+		2C18A321284EF9EE0083EA45 /* GeoJSONSerialization.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = GeoJSONSerialization.m; path = Classes/GeoJSONSerialization.m; sourceTree = "<group>"; };
+		2C32B870284F8F4D00F89176 /* TileOverlay.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TileOverlay.m; path = Classes/TileOverlay.m; sourceTree = "<group>"; };
+		2C32B871284F8F4D00F89176 /* TileOverlayView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TileOverlayView.h; path = Classes/TileOverlayView.h; sourceTree = "<group>"; };
+		2C32B872284F8F4E00F89176 /* TileOverlay.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TileOverlay.h; path = Classes/TileOverlay.h; sourceTree = "<group>"; };
+		2C32B873284F8F4E00F89176 /* TileOverlayView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TileOverlayView.m; path = Classes/TileOverlayView.m; sourceTree = "<group>"; };
+		2C32B882285203C900F89176 /* mkgeometry_additions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = mkgeometry_additions.m; path = Classes/mkgeometry_additions.m; sourceTree = "<group>"; };
+		2C32B884285203C900F89176 /* mkgeometry_additions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = mkgeometry_additions.h; path = Classes/mkgeometry_additions.h; sourceTree = "<group>"; };
+		2C32B8942852221900F89176 /* RegionBBoxConverter.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RegionBBoxConverter.m; path = Classes/RegionBBoxConverter.m; sourceTree = "<group>"; };
+		2C32B8972852225000F89176 /* NSMutableArray+TrimWhiteSpace.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSMutableArray+TrimWhiteSpace.m"; path = "Classes/NSMutableArray+TrimWhiteSpace.m"; sourceTree = "<group>"; };
+		2C32B8982852225000F89176 /* NSString+Tokenize.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSString+Tokenize.h"; path = "Classes/NSString+Tokenize.h"; sourceTree = "<group>"; };
+		2C32B8992852225100F89176 /* NSMutableArray+TrimWhiteSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSMutableArray+TrimWhiteSpace.h"; path = "Classes/NSMutableArray+TrimWhiteSpace.h"; sourceTree = "<group>"; };
+		2C32B89A2852225100F89176 /* NSString+Tokenize.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSString+Tokenize.m"; path = "Classes/NSString+Tokenize.m"; sourceTree = "<group>"; };
+		2C32B89B2852225100F89176 /* RegionBBoxConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RegionBBoxConverter.h; path = Classes/RegionBBoxConverter.h; sourceTree = "<group>"; };
+		2C32B8A12852B14A00F89176 /* MapTile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MapTile.h; path = Classes/MapTile.h; sourceTree = "<group>"; };
+		2C32B8A22852B14A00F89176 /* MapTile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MapTile.m; path = Classes/MapTile.m; sourceTree = "<group>"; };
 		815136F11D355BF5009E3E2C /* TiMapSnapshotterProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TiMapSnapshotterProxy.h; path = Classes/TiMapSnapshotterProxy.h; sourceTree = "<group>"; };
 		815136F21D355BF5009E3E2C /* TiMapSnapshotterProxy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = TiMapSnapshotterProxy.m; path = Classes/TiMapSnapshotterProxy.m; sourceTree = "<group>"; };
 		AA747D9E0F9514B9006C5449 /* TiMap_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TiMap_Prefix.pch; sourceTree = SOURCE_ROOT; };
@@ -252,6 +284,12 @@
 		DB07496E1E081A79009D8A71 /* Overlays */ = {
 			isa = PBXGroup;
 			children = (
+				2C32B8A12852B14A00F89176 /* MapTile.h */,
+				2C32B8A22852B14A00F89176 /* MapTile.m */,
+				2C32B872284F8F4E00F89176 /* TileOverlay.h */,
+				2C32B870284F8F4D00F89176 /* TileOverlay.m */,
+				2C32B871284F8F4D00F89176 /* TileOverlayView.h */,
+				2C32B873284F8F4E00F89176 /* TileOverlayView.m */,
 				194D00192047DABE002150BD /* Image */,
 				DB07496D1E081A6A009D8A71 /* Circle */,
 				DB0CCA022010841A00597F24 /* Pattern */,
@@ -283,6 +321,14 @@
 		DB0749711E081A97009D8A71 /* MapView */ = {
 			isa = PBXGroup;
 			children = (
+				2C32B8992852225100F89176 /* NSMutableArray+TrimWhiteSpace.h */,
+				2C32B8972852225000F89176 /* NSMutableArray+TrimWhiteSpace.m */,
+				2C32B8982852225000F89176 /* NSString+Tokenize.h */,
+				2C32B89A2852225100F89176 /* NSString+Tokenize.m */,
+				2C32B89B2852225100F89176 /* RegionBBoxConverter.h */,
+				2C32B8942852221900F89176 /* RegionBBoxConverter.m */,
+				2C32B884285203C900F89176 /* mkgeometry_additions.h */,
+				2C32B882285203C900F89176 /* mkgeometry_additions.m */,
 				CED651C217D7AA21007C2954 /* TiMapView.h */,
 				CED651C317D7AA21007C2954 /* TiMapView.m */,
 				CED651C417D7AA21007C2954 /* TiMapViewProxy.h */,
@@ -316,6 +362,8 @@
 		DB3657001E50C4C40040E0B9 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				2C18A320284EF9EE0083EA45 /* GeoJSONSerialization.h */,
+				2C18A321284EF9EE0083EA45 /* GeoJSONSerialization.m */,
 				DB3656FC1E50C4C10040E0B9 /* UIColor+AndroidHueParity.h */,
 				DB3656FD1E50C4C10040E0B9 /* UIColor+AndroidHueParity.m */,
 			);
@@ -333,18 +381,26 @@
 				AA747D9F0F9514B9006C5449 /* TiMap_Prefix.pch in Headers */,
 				CE92EC2217DF8B020082E943 /* TiMKOverlayPathUniversal.h in Headers */,
 				24DD6CF91134B3F500162E58 /* TiMapModule.h in Headers */,
+				2C32B89D2852225100F89176 /* NSString+Tokenize.h in Headers */,
+				2C32B876284F8F4F00F89176 /* TileOverlay.h in Headers */,
 				24DE9E1111C5FE74003F90F6 /* TiMapModuleAssets.h in Headers */,
+				2C32B888285203C900F89176 /* mkgeometry_additions.h in Headers */,
+				2C18A322284EF9EE0083EA45 /* GeoJSONSerialization.h in Headers */,
+				2C32B89E2852225100F89176 /* NSMutableArray+TrimWhiteSpace.h in Headers */,
 				DB3656FE1E50C4C10040E0B9 /* UIColor+AndroidHueParity.h in Headers */,
 				CED651C617D7AA21007C2954 /* TiMapAnnotationProxy.h in Headers */,
 				CE92EC2517DF9A640082E943 /* TiMapCameraProxy.h in Headers */,
 				815136F31D355BF5009E3E2C /* TiMapSnapshotterProxy.h in Headers */,
+				2C32B875284F8F4F00F89176 /* TileOverlayView.h in Headers */,
 				CEE33CF319EC4C150005E745 /* TiMapUtils.h in Headers */,
 				CEC39B4617EB97BA00DCE1EE /* TiMapRouteProxy.h in Headers */,
+				2C32B8A02852225100F89176 /* RegionBBoxConverter.h in Headers */,
 				CED651C817D7AA21007C2954 /* TiMapCustomAnnotationView.h in Headers */,
 				DB0CCA012010840900597F24 /* TiMapMarkerAnnotationView.h in Headers */,
 				CED651CA17D7AA21007C2954 /* TiMapImageAnnotationView.h in Headers */,
 				CED651CC17D7AA21007C2954 /* TiMapPinAnnotationView.h in Headers */,
 				CED651CE17D7AA21007C2954 /* TiMapView.h in Headers */,
+				2C32B8A32852B14B00F89176 /* MapTile.h in Headers */,
 				194D00202047DDED002150BD /* TiMapImageOverlayRenderer.h in Headers */,
 				CED651D017D7AA21007C2954 /* TiMapViewProxy.h in Headers */,
 				DB0CCA062010843000597F24 /* TiMapOverlayPattern.h in Headers */,
@@ -423,14 +479,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2C32B89F2852225100F89176 /* NSString+Tokenize.m in Sources */,
 				194D00212047DDED002150BD /* TiMapImageOverlayRenderer.m in Sources */,
 				24DD6CFA1134B3F500162E58 /* TiMapModule.m in Sources */,
 				194D001D2047DB4A002150BD /* TiMapImageOverlayProxy.m in Sources */,
+				2C32B8962852221900F89176 /* RegionBBoxConverter.m in Sources */,
 				27A609F019F711B700CA150A /* TiMapPolylineProxy.m in Sources */,
 				24DE9E1211C5FE74003F90F6 /* TiMapModuleAssets.m in Sources */,
+				2C18A323284EF9EE0083EA45 /* GeoJSONSerialization.m in Sources */,
 				CED651C717D7AA21007C2954 /* TiMapAnnotationProxy.m in Sources */,
+				2C32B886285203C900F89176 /* mkgeometry_additions.m in Sources */,
 				DB3656FF1E50C4C10040E0B9 /* UIColor+AndroidHueParity.m in Sources */,
 				CED651C917D7AA21007C2954 /* TiMapCustomAnnotationView.m in Sources */,
+				2C32B8A42852B14B00F89176 /* MapTile.m in Sources */,
 				DB0CCA052010843000597F24 /* TiMapOverlayPattern.m in Sources */,
 				CEC39B4717EB97BA00DCE1EE /* TiMapRouteProxy.m in Sources */,
 				DB0CCA002010840900597F24 /* TiMapMarkerAnnotationView.m in Sources */,
@@ -439,11 +500,14 @@
 				27A609EA19F5927000CA150A /* WildcardGestureRecognizer.m in Sources */,
 				815136F41D355BF5009E3E2C /* TiMapSnapshotterProxy.m in Sources */,
 				CED651CB17D7AA21007C2954 /* TiMapImageAnnotationView.m in Sources */,
+				2C32B874284F8F4F00F89176 /* TileOverlay.m in Sources */,
 				CED651CD17D7AA21007C2954 /* TiMapPinAnnotationView.m in Sources */,
 				27A609EC19F5B84000CA150A /* TiMapCircleProxy.m in Sources */,
 				CEE33CF419EC4C150005E745 /* TiMapUtils.m in Sources */,
 				CED651CF17D7AA21007C2954 /* TiMapView.m in Sources */,
 				CED651D117D7AA21007C2954 /* TiMapViewProxy.m in Sources */,
+				2C32B89C2852225100F89176 /* NSMutableArray+TrimWhiteSpace.m in Sources */,
+				2C32B877284F8F4F00F89176 /* TileOverlayView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

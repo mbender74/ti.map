@@ -39,13 +39,14 @@
 - (void)addAnnotations:(id)args;
 - (void)removeAnnotation:(id)args;
 - (void)removeAnnotations:(id)args;
-- (void)removeAllAnnotations:(id)args;
+- (void)removeAllAnnotations:(id)unused;
+- (void)removeAllGeoJSON:(id)unused;
 - (void)showAnnotations:(id)args;
 - (void)showAllAnnotations:(id)unused;
 - (void)selectAnnotation:(id)args;
 - (void)deselectAnnotation:(id)args;
 - (void)setLocation:(id)args;
-- (void)zoom:(id)args;
+- (void)zoom:(id)arg;
 - (void)addRoute:(id)args;
 - (void)removeRoute:(id)args;
 - (void)addPolygons:(id)args;
@@ -65,7 +66,6 @@
 - (void)removeImageOverlay:(id)arg;
 - (void)removeAllImageOverlays:(id)args;
 - (void)setClusterAnnotation:(id)args;
-- (void)setLocation:(id)location;
 - (NSNumber *)containsCoordinate:(id)args;
-
+- (NSNumber *)zoomLevel:(id)unused;
 @end

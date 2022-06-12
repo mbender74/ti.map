@@ -5,9 +5,16 @@
  * Please see the LICENSE included with this distribution for details.
  */
 
+#import "GeoJSONSerialization.h"
+#import "MapTile.h"
+#import "NSMutableArray+TrimWhiteSpace.h"
+#import "NSString+Tokenize.h"
+#import "RegionBBoxConverter.h"
 #import "TiMKOverlayPathUniversal.h"
 #import "TiMapCameraProxy.h"
+#import "TileOverlayView.h"
 #import "WildcardGestureRecognizer.h"
+#import "mkgeometry_additions.h"
 #import <MapKit/MapKit.h>
 #import <TitaniumKit/TiBase.h>
 #import <TitaniumKit/TiUIView.h>
@@ -28,12 +35,24 @@
   BOOL ignoreRegionChanged;
   BOOL forceRender;
   MKCoordinateRegion region;
+  NSMutableArray *geoJSONProxies;
   NSMutableArray *polygonProxies;
   NSMutableArray *circleProxies;
   NSMutableArray *polylineProxies;
   NSMutableArray *imageOverlayProxies;
   NSMutableDictionary *clusterAnnotations;
-
+  MKMapRect lastGoodMapRect;
+  BOOL manuallyChangingMapRect;
+  BOOL maxBoundsSet;
+  MKMapRect paddedBoundingMapRect;
+  CGFloat zoom;
+  CGFloat maxLong;
+  CGFloat minLong;
+  CGFloat maxLat;
+  CGFloat minLat;
+  TileOverlay *tileOverlay;
+  MKMapCameraZoomRange *zoomRange;
+  MKTileOverlayRenderer *tileRender;
   //selected annotation
   MKAnnotationView<TiMapAnnotation> *selectedAnnotation;
 
@@ -48,13 +67,20 @@
 @property (nonatomic, readonly) CLLocationDegrees longitudeDelta;
 @property (nonatomic, readonly) CLLocationDegrees latitudeDelta;
 @property (nonatomic, readonly) NSArray *customAnnotations;
+@property (assign, nonatomic) BOOL isMaxed;
+@property (assign, nonatomic) MKCoordinateSpan lastDelta;
+@property (assign, nonatomic) UIColor *mapColor;
+@property (nonatomic, assign) BOOL constraintMap;
 
 #pragma mark Private APIs
 
 - (TiMapAnnotationProxy *)annotationFromArg:(id)arg;
 - (NSArray *)annotationsFromArgs:(id)value;
+- (NSArray *)annotationsFromGeoJSON:(id)value;
 - (MKMapView *)map;
 - (TiMapCameraProxy *)camera;
+- (void)resetRender;
+- (void)setZoomLevel:(id)args animated:(BOOL)animated;
 
 #pragma mark Public APIs
 
@@ -91,12 +117,13 @@
 - (void)addImageOverlays:(id)args;
 - (void)removeImageOverlay:(id)arg;
 - (void)removeAllImageOverlays;
-
+- (NSInteger)zoomLevel;
 - (void)firePinChangeDragState:(MKAnnotationView *)pinview newState:(MKAnnotationViewDragState)newState fromOldState:(MKAnnotationViewDragState)oldState;
 - (void)setClusterAnnotation:(TiMapAnnotationProxy *)annotation forMembers:(NSArray<TiMapAnnotationProxy *> *)members;
 - (void)animateAnnotation:(TiMapAnnotationProxy *)newAnnotation withLocation:(CLLocationCoordinate2D)newLocation;
 - (void)setLocation:(id)location;
 - (NSNumber *)containsCoordinate:(id)args;
+- (CLLocationCoordinate2D)regionCenter;
 
 #pragma mark Utils
 - (void)addOverlay:(MKPolyline *)polyline level:(MKOverlayLevel)level;

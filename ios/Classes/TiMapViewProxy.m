@@ -244,6 +244,11 @@
   }
 }
 
+- (NSNumber *)zoomLevel:(id)unused
+{
+  return [NSNumber numberWithInteger:[(TiMapView *)[self view] zoomLevel]];
+}
+
 - (void)addAnnotation:(id)arg
 {
   ENSURE_SINGLE_ARG(arg, NSObject);
@@ -416,7 +421,8 @@
         YES);
 
     for (id object in currentAnnotations) {
-      if (![object isKindOfClass:[MKClusterAnnotation class]]) {
+
+      if (![object isKindOfClass:[MKClusterAnnotation class]] && ![object isKindOfClass:[MKPointAnnotation class]] && ![object isKindOfClass:[MKPolyline class]] && ![object isKindOfClass:[MKPolygon class]]) {
         TiMapAnnotationProxy *annProxy = [self annotationFromArg:object];
         [self forgetProxy:annProxy];
       }
@@ -435,6 +441,15 @@
     RELEASE_TO_NIL(annotationsToAdd);
     RELEASE_TO_NIL(annotationsToRemove);
   }
+}
+
+- (void)removeAllGeoJSON:(id)unused
+{
+  TiThreadPerformOnMainThread(
+      ^{
+        [(TiMapView *)[self view] removeAllGeoJSON:unused];
+      },
+      NO);
 }
 
 - (void)addRoute:(id)arg
