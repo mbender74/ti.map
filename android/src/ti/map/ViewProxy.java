@@ -97,7 +97,6 @@ public class ViewProxy extends TiViewProxy implements AnnotationDelegate
 	{
 		super();
 		preloadRoutes = new ArrayList<RouteProxy>();
-		// defaultValues.put(TiC.PROPERTY_FRAGMENT_ONLY, true);
 		defaultValues.put(MapModule.PROPERTY_COMPASS_ENABLED, true);
 		defaultValues.put(MapModule.PROPERTY_SCROLL_ENABLED, true);
 		defaultValues.put(MapModule.PROPERTY_ZOOM_ENABLED, true);
@@ -113,14 +112,7 @@ public class ViewProxy extends TiViewProxy implements AnnotationDelegate
 	@Override
 	public TiUIView createView(Activity activity)
 	{
-
-		// setProperty(TiC.PROPERTY_FRAGMENT_ONLY, true);
-
-		TiUIView mapview = new TiUIMapView(this, activity);
-
-		// ((TiUIMapView) view).createMapFragment();
-
-		return mapview;
+		return new TiUIMapView(this, activity);
 	}
 
 	public void clearPreloadObjects()
