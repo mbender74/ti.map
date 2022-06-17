@@ -30,16 +30,18 @@ import org.appcelerator.titanium.TiApplication;
 import org.appcelerator.titanium.TiC;
 import org.appcelerator.titanium.proxy.TiViewProxy;
 import org.appcelerator.titanium.util.TiConvert;
+import org.appcelerator.titanium.view.TiCompositeLayout;
+import org.appcelerator.titanium.view.TiCompositeLayout.LayoutArrangement;
 import org.appcelerator.titanium.view.TiUIView;
 import ti.map.AnnotationProxy.AnnotationDelegate;
 
-@Kroll.
-proxy(creatableInModule = MapModule.class,
-	  propertyAccessors = { TiC.PROPERTY_USER_LOCATION, MapModule.PROPERTY_USER_LOCATION_BUTTON, TiC.PROPERTY_MAP_TYPE,
-							TiC.PROPERTY_REGION, TiC.PROPERTY_ANNOTATIONS, TiC.PROPERTY_ANIMATE,
-							MapModule.PROPERTY_TRAFFIC, TiC.PROPERTY_STYLE, TiC.PROPERTY_ENABLE_ZOOM_CONTROLS,
-							MapModule.PROPERTY_COMPASS_ENABLED, MapModule.PROPERTY_SCROLL_ENABLED,
-							MapModule.PROPERTY_ZOOM_ENABLED, MapModule.PROPERTY_POLYLINES })
+@Kroll.proxy(creatableInModule = MapModule.class,
+			 propertyAccessors = { TiC.PROPERTY_USER_LOCATION, MapModule.PROPERTY_USER_LOCATION_BUTTON,
+								   TiC.PROPERTY_MAP_TYPE, TiC.PROPERTY_REGION, TiC.PROPERTY_ANNOTATIONS,
+								   TiC.PROPERTY_ANIMATE, MapModule.PROPERTY_TRAFFIC, TiC.PROPERTY_STYLE,
+								   TiC.PROPERTY_ENABLE_ZOOM_CONTROLS, MapModule.PROPERTY_COMPASS_ENABLED,
+								   MapModule.PROPERTY_SCROLL_ENABLED, MapModule.PROPERTY_ZOOM_ENABLED,
+								   MapModule.PROPERTY_POLYLINES, MapModule.PROPERTY_OFFLINE_OVERLAY })
 public class ViewProxy extends TiViewProxy implements AnnotationDelegate
 {
 	private static final String TAG = "MapViewProxy";
@@ -95,6 +97,7 @@ public class ViewProxy extends TiViewProxy implements AnnotationDelegate
 	{
 		super();
 		preloadRoutes = new ArrayList<RouteProxy>();
+		// defaultValues.put(TiC.PROPERTY_FRAGMENT_ONLY, true);
 		defaultValues.put(MapModule.PROPERTY_COMPASS_ENABLED, true);
 		defaultValues.put(MapModule.PROPERTY_SCROLL_ENABLED, true);
 		defaultValues.put(MapModule.PROPERTY_ZOOM_ENABLED, true);
@@ -110,7 +113,14 @@ public class ViewProxy extends TiViewProxy implements AnnotationDelegate
 	@Override
 	public TiUIView createView(Activity activity)
 	{
-		return new TiUIMapView(this, activity);
+
+		// setProperty(TiC.PROPERTY_FRAGMENT_ONLY, true);
+
+		TiUIView mapview = new TiUIMapView(this, activity);
+
+		// ((TiUIMapView) view).createMapFragment();
+
+		return mapview;
 	}
 
 	public void clearPreloadObjects()
@@ -215,7 +225,9 @@ public class ViewProxy extends TiViewProxy implements AnnotationDelegate
 			}
 
 			case MSG_SET_LOCATION: {
-				handleSetLocation((HashMap) msg.obj);
+				HashMap<String, Object> newMsg = new HashMap<>();
+				newMsg.put("", msg.obj);
+				handleSetLocation(newMsg);
 				return true;
 			}
 
@@ -1226,7 +1238,8 @@ public class ViewProxy extends TiViewProxy implements AnnotationDelegate
 	public void setLocation(Object location)
 	{
 		if (location instanceof HashMap) {
-			HashMap dict = (HashMap) location;
+			HashMap<String, Object> dict = new HashMap<>();
+			dict.put("", location);
 			if (!dict.containsKey(TiC.PROPERTY_LATITUDE) || !dict.containsKey(TiC.PROPERTY_LONGITUDE)) {
 				Log.e(TAG, "Unable to set location. Missing latitude or longitude.");
 				return;
