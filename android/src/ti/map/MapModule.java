@@ -77,6 +77,7 @@ public class MapModule extends KrollModule implements OnMapsSdkInitializedCallba
 	public static final String PROPERTY_ALTITIDE = "altitude";
 	public static final String PROPERTY_HEADING = "heading";
 	public static final String PROPERTY_PITCH = "pitch";
+	public static final String PROPERTY_OFFLINE_OVERLAY = "offlineOverlay";
 
 	@Kroll.constant
 	public static final int NORMAL_TYPE = GoogleMap.MAP_TYPE_NORMAL;

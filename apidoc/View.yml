@@ -622,6 +622,39 @@ properties:
         references to all of the annotations in a separate array.
     type: Array<Modules.Map.Annotation>
 
+  - name: offlineOverlay
+    summary: A dictionary specifying the offline tiles (png or jpg) of the map.
+    description: |
+        Add on offline image tiles based offline overlay to the mapView.
+    type: Dictionary
+    properties:
+      - name: tilePath
+        summary: path to the image tiles.
+        type: String
+
+      - name: tileExtension
+        summary: extension of the image tiles (jpg or png).
+        type: String
+
+      - name: tileSize
+        summary: size of the image tiles (256).
+        type: Number
+
+      - name: minCenterCoordinateDistance
+        summary: min distance from center.
+        type: Number
+
+      - name: maxCenterCoordinateDistance
+        summary: max distance from center.
+        type: Number
+
+      - name: maxRegion
+        summary: |
+            Dictionary specify max region the offline map (tiles), user cannot go further than this.
+        type: MapMaxRegion
+
+    exclude-platforms: [android]
+
   - name: liteMode
     summary: Create a liteMode map version
     description: |
@@ -986,6 +1019,28 @@ properties:
         If not set, the value of [animate](Modules.Map.View.animate) will be used.
     type: Boolean
 since: "3.1.0"
+
+---
+name: MapMaxRegion
+summary: |
+    Simple object used as an argument to [offlineOverlay](Modules.Map.View.offlineOverlay).
+properties:
+  - name: centerLatitude
+    summary: center latitude of the maxRegion.
+    type: Number
+
+  - name: centerLongitude
+    summary: center longitude of the maxRegion.
+    type: Number
+
+  - name: verticalMeters
+    summary: max distance in meters the user can scroll vertical at the edge of the maxRegion.
+    type: Number
+
+  - name: horizontalMeters
+    summary: max distance in meters the user can scroll horizontal at the edge of the maxRegion.
+    type: Number
+exclude-platforms: [android]
 
 ---
 name: CameraAnimationParams
