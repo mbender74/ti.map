@@ -86,6 +86,8 @@ public class MapModule extends KrollModule implements OnMapsSdkInitializedCallba
 	@Kroll.constant
 	public static final int SATELLITE_TYPE = GoogleMap.MAP_TYPE_SATELLITE;
 	@Kroll.constant
+	public static final int NONE_TYPE = GoogleMap.MAP_TYPE_NONE;
+	@Kroll.constant
 	public static final int HYBRID_TYPE = GoogleMap.MAP_TYPE_HYBRID;
 	@Kroll.constant
 	public static final int MUTED_STANDARD_TYPE = GoogleMap.MAP_TYPE_NORMAL;

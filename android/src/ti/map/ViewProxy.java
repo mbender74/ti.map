@@ -112,7 +112,8 @@ public class ViewProxy extends TiViewProxy implements AnnotationDelegate
 	@Override
 	public TiUIView createView(Activity activity)
 	{
-		return new TiUIMapView(this, activity);
+		TiUIView view = new TiUIMapView(this);
+		return view;
 	}
 
 	public void clearPreloadObjects()
@@ -218,7 +219,7 @@ public class ViewProxy extends TiViewProxy implements AnnotationDelegate
 
 			case MSG_SET_LOCATION: {
 				HashMap<String, Object> newMsg = new HashMap<>();
-				newMsg.put("", msg.obj);
+				newMsg.put("location", msg.obj);
 				handleSetLocation(newMsg);
 				return true;
 			}
@@ -1231,7 +1232,7 @@ public class ViewProxy extends TiViewProxy implements AnnotationDelegate
 	{
 		if (location instanceof HashMap) {
 			HashMap<String, Object> dict = new HashMap<>();
-			dict.put("", location);
+			dict.put("location", location);
 			if (!dict.containsKey(TiC.PROPERTY_LATITUDE) || !dict.containsKey(TiC.PROPERTY_LONGITUDE)) {
 				Log.e(TAG, "Unable to set location. Missing latitude or longitude.");
 				return;

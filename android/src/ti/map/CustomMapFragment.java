@@ -21,6 +21,8 @@ public class CustomMapFragment extends SupportMapFragment
 	public static CustomMapFragment newInstance()
 	{
 		CustomMapFragment fragment = new CustomMapFragment();
+		Log.e(TAG, " newInstance");
+
 		return fragment;
 	}
 
@@ -30,14 +32,15 @@ public class CustomMapFragment extends SupportMapFragment
 		arguments.putParcelable("MapOptions", options);
 		CustomMapFragment fragment = new CustomMapFragment();
 		fragment.setArguments(arguments);
+		Log.e(TAG, " newInstance with options");
+
 		return fragment;
 	}
 
-	@Override
-	public View onCreateView(LayoutInflater arg0, ViewGroup arg1, Bundle arg2)
-	{
-		Log.e(TAG, " onCreateView");
-		View v = super.onCreateView(arg0, arg1, arg2);
-		return v;
-	}
+	// @Override
+	// public View onCreateView(LayoutInflater arg0, ViewGroup arg1, Bundle arg2) {
+	//       Log.e(TAG, " onCreateView");
+	//       View v = super.onCreateView(arg0, arg1, arg2);
+	//       return v;
+	// }
 }
