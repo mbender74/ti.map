@@ -402,31 +402,6 @@ public class TiUIMapView extends TiUIView
 			if (clusterRender != null)
 				clusterRender.setMinClusterSize(d.getInt(MapModule.PROPERTY_MIN_CLUSTER_SIZE));
 		}
-		if (d.containsKey(MapModule.PROPERTY_OFFLINE_OVERLAY)) {
-
-			useOfflineOverlay = true;
-
-			KrollDict subProperties = d.getKrollDict(MapModule.PROPERTY_OFFLINE_OVERLAY);
-
-			if (subProperties.containsKey("tilesPath")) {
-				tilesPath = subProperties.getString("tilesPath");
-			}
-			if (subProperties.containsKey("tileExtension")) {
-				tileExtension = subProperties.getString("tileExtension");
-			}
-			if (subProperties.containsKey("tileSize")) {
-				tileSize = subProperties.getInt("tileSize");
-			}
-			if (subProperties.containsKey("maxRegion")) {
-				maxBoundsSet = true;
-				KrollDict maxReg = subProperties.getKrollDict("maxRegion");
-				minZoomPreference = maxReg.getDouble("minZoom").floatValue();
-				maxZoomPreference = maxReg.getDouble("maxZoom").floatValue();
-				boundingRegion = new LatLngBounds(
-					new LatLng(maxReg.getDouble("minLat").floatValue(), maxReg.getDouble("minLong").floatValue()),
-					new LatLng(maxReg.getDouble("maxLat").floatValue(), maxReg.getDouble("maxLong").floatValue()));
-			}
-		}
 	}
 
 	@Override
@@ -445,9 +420,7 @@ public class TiUIMapView extends TiUIView
 		} else if (key.equals(TiC.PROPERTY_MAP_TYPE)) {
 			setMapType(TiConvert.toInt(newValue));
 		} else if (key.equals(TiC.PROPERTY_REGION)) {
-			HashMap<String, Object> newRegion = new HashMap<>();
-			newRegion.put("", newValue);
-			updateCamera(newRegion);
+			updateCamera((HashMap) newValue);
 		} else if (key.equals(MapModule.PROPERTY_TRAFFIC)) {
 			setTrafficEnabled(TiConvert.toBoolean(newValue));
 		} else if (key.equals(TiC.PROPERTY_ANIMATE)) {
@@ -1521,22 +1494,6 @@ public class TiUIMapView extends TiUIView
 		if (proxy != null) {
 			proxy.fireEvent(TiC.EVENT_COMPLETE, null);
 		}
-	}
-
-	public void onViewCreated()
-	{
-		if (ev.getAction() == MotionEvent.ACTION_UP && selectedAnnotation != null) {
-			TiMapInfoWindow infoWindow = selectedAnnotation.getMapInfoWindow();
-			TiMarker timarker = selectedAnnotation.getTiMarker();
-			if (infoWindow != null && timarker != null) {
-				Marker marker = timarker.getMarker();
-				if (map != null && marker != null && marker.isInfoWindowShown()) {
-					Point markerPoint = map.getProjection().toScreenLocation(marker.getPosition());
-					infoWindow.analyzeTouchEvent(ev, markerPoint, selectedAnnotation.getIconImageHeight());
-				}
-			}
-		}
-		return false;
 	}
 
 	public void onViewCreated()

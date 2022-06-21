@@ -96,7 +96,6 @@ public class ViewProxy extends TiViewProxy implements AnnotationDelegate
 	{
 		super();
 		preloadRoutes = new ArrayList<RouteProxy>();
-		// defaultValues.put(TiC.PROPERTY_FRAGMENT_ONLY, true);
 		defaultValues.put(MapModule.PROPERTY_COMPASS_ENABLED, true);
 		defaultValues.put(MapModule.PROPERTY_SCROLL_ENABLED, true);
 		defaultValues.put(MapModule.PROPERTY_ZOOM_ENABLED, true);
@@ -217,9 +216,7 @@ public class ViewProxy extends TiViewProxy implements AnnotationDelegate
 			}
 
 			case MSG_SET_LOCATION: {
-				HashMap<String, Object> newMsg = new HashMap<>();
-				newMsg.put("", msg.obj);
-				handleSetLocation(newMsg);
+				handleSetLocation((HashMap) msg.obj);
 				return true;
 			}
 
@@ -1230,8 +1227,7 @@ public class ViewProxy extends TiViewProxy implements AnnotationDelegate
 	public void setLocation(Object location)
 	{
 		if (location instanceof HashMap) {
-			HashMap<String, Object> dict = new HashMap<>();
-			dict.put("", location);
+			HashMap dict = (HashMap) location;
 			if (!dict.containsKey(TiC.PROPERTY_LATITUDE) || !dict.containsKey(TiC.PROPERTY_LONGITUDE)) {
 				Log.e(TAG, "Unable to set location. Missing latitude or longitude.");
 				return;
