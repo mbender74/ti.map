@@ -689,6 +689,7 @@ properties:
 
     platforms: [iphone, ipad, android, macos]
     since: {android: "5.5.0",  iphone: "6.3.0", ipad: "6.3.0", macos: "6.3.0"}
+    availability: creation
 
   - name: liteMode
     summary: Create a liteMode map version
