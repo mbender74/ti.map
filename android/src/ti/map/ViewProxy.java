@@ -10,7 +10,6 @@ import android.app.Activity;
 import android.os.Message;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
@@ -113,14 +112,7 @@ public class ViewProxy extends TiViewProxy implements AnnotationDelegate
 	@Override
 	public TiUIView createView(Activity activity)
 	{
-
-		// setProperty(TiC.PROPERTY_FRAGMENT_ONLY, true);
-
-		TiUIView mapview = new TiUIMapView(this, activity);
-
-		// ((TiUIMapView) view).createMapFragment();
-
-		return mapview;
+		return new TiUIMapView(this);
 	}
 
 	public void clearPreloadObjects()

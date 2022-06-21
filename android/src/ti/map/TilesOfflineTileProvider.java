@@ -1,26 +1,10 @@
 package ti.map;
 
-import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
-import android.graphics.BitmapFactory;
-import android.os.Environment;
 import com.google.android.gms.maps.model.Tile;
 import com.google.android.gms.maps.model.TileProvider;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
-import java.io.IOException;
-import org.appcelerator.kroll.common.AsyncResult;
-import org.appcelerator.kroll.common.Log;
-import org.appcelerator.titanium.TiApplication;
-import org.appcelerator.titanium.io.TiBaseFile;
-import org.appcelerator.titanium.io.TiFileFactory;
-import org.appcelerator.titanium.io.TiFileProvider;
 import org.appcelerator.titanium.proxy.TiViewProxy;
-import org.appcelerator.titanium.util.TiFileHelper2;
-import org.appcelerator.titanium.util.TiRHelper;
 import org.appcelerator.titanium.view.TiDrawableReference;
 
 /**
@@ -37,8 +21,13 @@ public class TilesOfflineTileProvider implements TileProvider
 	String tilesPath;
 	String tileExtension;
 	TiViewProxy viewproxy;
+	int minZoom = 14;
+	int maxZoom = 20;
 
-	private static final String TAG = "OfflineTileProvider";
+	private static final String TAG = "TilesOfflineTileProvider";
+	public static final int MSG_FIRST_ID = 100;
+	public static final int MSG_GET_BITMAP = MSG_FIRST_ID + 1;
+	public static final int MSG_LAST_ID = MSG_FIRST_ID + 2;
 
 	static
 	{
@@ -46,13 +35,15 @@ public class TilesOfflineTileProvider implements TileProvider
 		FILE_FORMAT = "%d";
 	}
 
-	public TilesOfflineTileProvider(String path, String extension, int size, TiViewProxy proxy)
+	public TilesOfflineTileProvider(String path, String extension, int size, TiViewProxy proxy, int minZ, int maxZ)
 	{
 		tileExtension = FILE_FORMAT + "." + extension;
 		tilesPath = path + DIR_FORMAT;
 		TILE_WIDTH = size;
 		TILE_HEIGHT = size;
 		viewproxy = proxy;
+		minZoom = minZ;
+		maxZoom = maxZ;
 	}
 
 	private String getPathToApplicationAsset(String assetName)
@@ -62,8 +53,6 @@ public class TilesOfflineTileProvider implements TileProvider
 
 	private boolean checkTileExists(int x, int y, int zoom)
 	{
-		int minZoom = 14;
-		int maxZoom = 20;
 		return (zoom >= minZoom && zoom <= maxZoom);
 	}
 
@@ -79,24 +68,24 @@ public class TilesOfflineTileProvider implements TileProvider
 	@Override
 	public Tile getTile(int x, int y, int zoom)
 	{
+
 		if (!checkTileExists(x, y, zoom)) {
 			return NO_TILE;
 		} else {
 			byte[] image = readTileImage(x, y, zoom);
-			return image == null ? null : new Tile(TILE_WIDTH, TILE_HEIGHT, image);
+			return image == null ? NO_TILE : new Tile(TILE_WIDTH, TILE_HEIGHT, image);
 		}
 	}
 
 	private byte[] readTileImage(int x, int y, int zoom)
 	{
 		String path = getTileFilename(x, y, zoom);
-
 		path.replace("ti.map/", "");
 
 		Bitmap b = TiDrawableReference.fromObject(viewproxy, path).getBitmap(true, false);
-
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
 		b.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+		b = null;
 		return stream.toByteArray();
 	}
 
