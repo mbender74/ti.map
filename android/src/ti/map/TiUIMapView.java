@@ -18,26 +18,17 @@ import android.graphics.Point;
 import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentContainerView;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMapOptions;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -50,7 +41,6 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
-import com.google.android.gms.maps.model.VisibleRegion;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
@@ -70,8 +60,6 @@ import org.appcelerator.titanium.io.TiFileFactory;
 import org.appcelerator.titanium.proxy.TiViewProxy;
 import org.appcelerator.titanium.util.TiConvert;
 import org.appcelerator.titanium.view.TiCompositeLayout;
-import org.appcelerator.titanium.view.TiCompositeLayout.LayoutArrangement;
-import org.appcelerator.titanium.view.TiCompositeLayout.LayoutParams;
 import org.appcelerator.titanium.view.TiDrawableReference;
 import org.appcelerator.titanium.view.TiUIView;
 import org.json.JSONArray;
@@ -112,24 +100,17 @@ public class TiUIMapView extends TiUIView
 	private Integer tileSize;
 	private boolean useOfflineOverlay = false;
 	private boolean maxBoundsSet = false;
-	private TiViewProxy myProxy;
 	private float minZoomPreference = 14;
 	private float maxZoomPreference = 20;
 	private LatLngBounds boundingRegion;
-	private Context mainContext;
-	private GroundOverlay overlayBackground;
 	private Integer backgroundColor = null;
-	private boolean transactionCommitted = false;
 	private MapView mapView;
 	private TiCompositeLayout container;
 
 	public TiUIMapView(TiViewProxy proxy)
 	{
 		super(proxy);
-		myProxy = proxy;
-		mainContext = proxy.getActivity();
 		Activity activity = proxy.getActivity();
-
 		timarkers = new ArrayList<TiMarker>();
 		currentCircles = new ArrayList<CircleProxy>();
 		currentPolygons = new ArrayList<PolygonProxy>();
@@ -146,24 +127,6 @@ public class TiUIMapView extends TiUIView
 			@Override
 			protected void onAttachedToWindow()
 			{
-
-				// if (transactionCommitted == false){
-				// 	transactionCommitted = true;
-
-				// 	mapView.getMapAsync(getReadyCallback());
-				// }
-
-				// if (transactionCommitted == false){
-				// 	super.onAttachedToWindow();
-				// 	FragmentManager manager = ((FragmentActivity) getContext()).getSupportFragmentManager();
-				// 	FragmentTransaction transaction = manager.beginTransaction();
-				// 	SupportMapFragment fragment = createMapFragment();
-
-				// 	transaction.add(getId(), fragment);
-				// 	transaction.commitAllowingStateLoss();
-				// 	transactionCommitted = true;
-				// 	((SupportMapFragment) fragment).getMapAsync(getReadyCallback());
-				// }
 			}
 		};
 		container.setId(View.generateViewId());
@@ -177,12 +140,15 @@ public class TiUIMapView extends TiUIView
 			gOptions.liteMode(true);
 		}
 
-		if (this.backgroundColor != null) {
-			gOptions.backgroundColor(this.backgroundColor);
+		if (backgroundColor != null) {
+			gOptions.backgroundColor(backgroundColor);
 		}
 		mapView = new MapView(proxy.getActivity(), gOptions);
 		container.addView(mapView);
 		mapView.onCreate(Bundle.EMPTY);
+		/**
+		* onResume() needed, else the mapView does not render
+		**/
 		mapView.onResume();
 		mapView.getMapAsync(this);
 	}
@@ -211,23 +177,6 @@ public class TiUIMapView extends TiUIView
 				setBackgroundTransparent(viewGroup.getChildAt(i));
 			}
 		}
-	}
-
-	protected SupportMapFragment createMapFragment()
-	{
-		boolean zOrderOnTop =
-			TiConvert.toBoolean(((ViewProxy) proxy).getProperty(MapModule.PROPERTY_ZORDER_ON_TOP), false);
-		GoogleMapOptions gOptions = new GoogleMapOptions();
-		gOptions.zOrderOnTop(zOrderOnTop);
-		if (this.liteMode) {
-			gOptions.liteMode(true);
-		}
-
-		if (this.backgroundColor != null) {
-			gOptions.backgroundColor(this.backgroundColor);
-		}
-
-		return SupportMapFragment.newInstance(gOptions);
 	}
 
 	protected void processPreloadRoutes()
@@ -336,20 +285,19 @@ public class TiUIMapView extends TiUIView
 			}
 		}
 
-		if (this.useOfflineOverlay == true) {
+		if (useOfflineOverlay == true) {
 			map.setMapType(GoogleMap.MAP_TYPE_NONE);
 
-			TilesOfflineTileProvider mOfflineTileProvider =
-				new TilesOfflineTileProvider(this.tilesPath, this.tileExtension, this.tileSize, proxy,
-											 (int) this.minZoomPreference, (int) this.maxZoomPreference);
+			TilesOfflineTileProvider mOfflineTileProvider = new TilesOfflineTileProvider(
+				tilesPath, tileExtension, tileSize, proxy, (int) minZoomPreference, (int) maxZoomPreference);
 
 			TileOverlayOptions tileoverlayoptions = new TileOverlayOptions();
 			tileoverlayoptions.zIndex(0);
 
-			if (this.maxBoundsSet == true) {
-				map.setMinZoomPreference(this.minZoomPreference);
-				map.setMaxZoomPreference(this.maxZoomPreference);
-				map.setLatLngBoundsForCameraTarget(this.boundingRegion);
+			if (maxBoundsSet == true) {
+				map.setMinZoomPreference(minZoomPreference);
+				map.setMaxZoomPreference(maxZoomPreference);
+				map.setLatLngBoundsForCameraTarget(boundingRegion);
 			}
 			TileOverlay mTileOverlay = map.addTileOverlay(tileoverlayoptions.tileProvider(mOfflineTileProvider));
 		}
@@ -472,9 +420,7 @@ public class TiUIMapView extends TiUIView
 		} else if (key.equals(TiC.PROPERTY_MAP_TYPE)) {
 			setMapType(TiConvert.toInt(newValue));
 		} else if (key.equals(TiC.PROPERTY_REGION)) {
-			HashMap<String, Object> newRegion = new HashMap<>();
-			newRegion.put("region", newValue);
-			updateCamera(newRegion);
+			updateCamera((HashMap) newValue);
 		} else if (key.equals(MapModule.PROPERTY_TRAFFIC)) {
 			setTrafficEnabled(TiConvert.toBoolean(newValue));
 		} else if (key.equals(TiC.PROPERTY_ANIMATE)) {
@@ -1505,6 +1451,24 @@ public class TiUIMapView extends TiUIView
 		}
 	}
 
+	// Intercept the touch event to find out the correct clicksource if clicking
+	// on the info window.
+	protected boolean interceptTouchEvent(MotionEvent ev)
+	{
+		if (ev.getAction() == MotionEvent.ACTION_UP && selectedAnnotation != null) {
+			TiMapInfoWindow infoWindow = selectedAnnotation.getMapInfoWindow();
+			TiMarker timarker = selectedAnnotation.getTiMarker();
+			if (infoWindow != null && timarker != null) {
+				Marker marker = timarker.getMarker();
+				if (map != null && marker != null && marker.isInfoWindowShown()) {
+					Point markerPoint = map.getProjection().toScreenLocation(marker.getPosition());
+					infoWindow.analyzeTouchEvent(ev, markerPoint, selectedAnnotation.getIconImageHeight());
+				}
+			}
+		}
+		return false;
+	}
+
 	public void snapshot()
 	{
 		if (map != null) {
@@ -1530,24 +1494,6 @@ public class TiUIMapView extends TiUIView
 		if (proxy != null) {
 			proxy.fireEvent(TiC.EVENT_COMPLETE, null);
 		}
-	}
-
-	// Intercept the touch event to find out the correct clicksource if clicking
-	// on the info window.
-	protected boolean interceptTouchEvent(MotionEvent ev)
-	{
-		if (ev.getAction() == MotionEvent.ACTION_UP && selectedAnnotation != null) {
-			TiMapInfoWindow infoWindow = selectedAnnotation.getMapInfoWindow();
-			TiMarker timarker = selectedAnnotation.getTiMarker();
-			if (infoWindow != null && timarker != null) {
-				Marker marker = timarker.getMarker();
-				if (map != null && marker != null && marker.isInfoWindowShown()) {
-					Point markerPoint = map.getProjection().toScreenLocation(marker.getPosition());
-					infoWindow.analyzeTouchEvent(ev, markerPoint, selectedAnnotation.getIconImageHeight());
-				}
-			}
-		}
-		return false;
 	}
 
 	public void onViewCreated()

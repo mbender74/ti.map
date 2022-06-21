@@ -10,7 +10,6 @@ import android.app.Activity;
 import android.os.Message;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.TileOverlay;
 import com.google.android.gms.maps.model.TileOverlayOptions;
@@ -112,8 +111,7 @@ public class ViewProxy extends TiViewProxy implements AnnotationDelegate
 	@Override
 	public TiUIView createView(Activity activity)
 	{
-		TiUIView view = new TiUIMapView(this);
-		return view;
+		return new TiUIMapView(this);
 	}
 
 	public void clearPreloadObjects()
@@ -218,9 +216,7 @@ public class ViewProxy extends TiViewProxy implements AnnotationDelegate
 			}
 
 			case MSG_SET_LOCATION: {
-				HashMap<String, Object> newMsg = new HashMap<>();
-				newMsg.put("location", msg.obj);
-				handleSetLocation(newMsg);
+				handleSetLocation((HashMap) msg.obj);
 				return true;
 			}
 
@@ -1231,8 +1227,7 @@ public class ViewProxy extends TiViewProxy implements AnnotationDelegate
 	public void setLocation(Object location)
 	{
 		if (location instanceof HashMap) {
-			HashMap<String, Object> dict = new HashMap<>();
-			dict.put("location", location);
+			HashMap dict = (HashMap) location;
 			if (!dict.containsKey(TiC.PROPERTY_LATITUDE) || !dict.containsKey(TiC.PROPERTY_LONGITUDE)) {
 				Log.e(TAG, "Unable to set location. Missing latitude or longitude.");
 				return;

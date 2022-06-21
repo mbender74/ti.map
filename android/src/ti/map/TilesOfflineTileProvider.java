@@ -1,32 +1,10 @@
 package ti.map;
 
-import android.content.res.AssetFileDescriptor;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
-import android.graphics.BitmapFactory;
-import android.os.AsyncTask;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import com.google.android.gms.maps.model.Tile;
 import com.google.android.gms.maps.model.TileProvider;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileDescriptor;
-import java.io.FileInputStream;
-import java.io.IOException;
-import org.appcelerator.kroll.KrollDict;
-import org.appcelerator.kroll.common.AsyncResult;
-import org.appcelerator.kroll.common.Log;
-import org.appcelerator.kroll.common.TiMessenger;
-import org.appcelerator.titanium.TiApplication;
-import org.appcelerator.titanium.TiC;
-import org.appcelerator.titanium.io.TiBaseFile;
-import org.appcelerator.titanium.io.TiFileFactory;
-import org.appcelerator.titanium.io.TiFileProvider;
 import org.appcelerator.titanium.proxy.TiViewProxy;
-import org.appcelerator.titanium.util.TiFileHelper2;
-import org.appcelerator.titanium.util.TiRHelper;
 import org.appcelerator.titanium.view.TiDrawableReference;
 
 /**
@@ -46,7 +24,7 @@ public class TilesOfflineTileProvider implements TileProvider
 	int minZoom = 14;
 	int maxZoom = 20;
 
-	private static final String TAG = "OfflineTileProvider";
+	private static final String TAG = "TilesOfflineTileProvider";
 	public static final int MSG_FIRST_ID = 100;
 	public static final int MSG_GET_BITMAP = MSG_FIRST_ID + 1;
 	public static final int MSG_LAST_ID = MSG_FIRST_ID + 2;
