@@ -653,7 +653,8 @@ properties:
             Dictionary specify max region the offline map (tiles), user cannot go further than this.
         type: MapMaxRegion
 
-    exclude-platforms: [android]
+    platforms: [iphone, ipad, android, macos]
+    since: {android: "5.5.0",  iphone: "6.3.0", ipad: "6.3.0", macos: "6.3.0"}
 
   - name: liteMode
     summary: Create a liteMode map version
@@ -1026,21 +1027,43 @@ summary: |
     Simple object used as an argument to [offlineOverlay](Modules.Map.View.offlineOverlay).
 properties:
   - name: centerLatitude
-    summary: center latitude of the maxRegion.
+    summary: center latitude of the maxRegion. (iOS only)
     type: Number
 
   - name: centerLongitude
-    summary: center longitude of the maxRegion.
+    summary: center longitude of the maxRegion. (iOS only)
     type: Number
 
   - name: verticalMeters
-    summary: max distance in meters the user can scroll vertical at the edge of the maxRegion.
+    summary: max distance in meters the user can scroll vertical at the edge of the maxRegion. (iOS only)
     type: Number
 
   - name: horizontalMeters
-    summary: max distance in meters the user can scroll horizontal at the edge of the maxRegion.
+    summary: max distance in meters the user can scroll horizontal at the edge of the maxRegion. (iOS only)
     type: Number
-exclude-platforms: [android]
+
+  - name: minLat
+    summary: min latitude of the maxRegion. (Android only)
+    type: Number
+
+  - name: maxLat
+    summary: max latitude of the maxRegion. (Android only)
+    type: Number
+
+  - name: minLong
+    summary: min longitude of the maxRegion. (Android only)
+    type: Number
+
+  - name: minZoom
+    summary: min zoom of the maxRegion. (Android only)
+    type: Number
+
+  - name: maxZoom
+    summary: max zoom of the maxRegion. (Android only)
+    type: Number
+
+platforms: [iphone, ipad, android, macos]
+since: {android: "5.5.0",  iphone: "6.3.0", ipad: "6.3.0", macos: "6.3.0"}
 
 ---
 name: CameraAnimationParams
