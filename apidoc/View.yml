@@ -626,6 +626,40 @@ properties:
     summary: A dictionary specifying the offline tiles (png or jpg) of the map.
     description: |
         Add on offline image tiles based offline overlay to the mapView.
+        For example Android:
+
+        ``` javascript
+        offlineOverlay: {
+          tilesPath: '/maps/tiles',
+          tileExtension: 'jpg',
+          tileSize: 256,
+          maxRegion: {
+              minLat: 49.5300,
+              maxLat: 49.5487,
+              minLong: 7.3170,
+              maxLong: 7.3453,
+              maxZoom: 20,
+              minZoom: 14
+            }
+			  }
+        ```
+        Example iOS:
+
+        ``` javascript
+        offlineOverlay: {
+            tilesPath: '/maps/tiles',
+            tileExtension: 'jpg',
+            tileSize: 256,
+            minCenterCoordinateDistance:200,
+            maxCenterCoordinateDistance:4000,
+            maxRegion: {
+              centerLatitude: 49.54119,
+              centerLongitude: 7.33233,
+              verticalMeters: 300,
+              horizontalMeters: 1500
+            }
+          }
+        ```
     type: Dictionary
     properties:
       - name: tilePath
@@ -637,15 +671,15 @@ properties:
         type: String
 
       - name: tileSize
-        summary: size of the image tiles (256).
+        summary: size of the image tiles (default 256).
         type: Number
 
       - name: minCenterCoordinateDistance
-        summary: min distance from center.
+        summary: min distance from center. (iOS only)
         type: Number
 
       - name: maxCenterCoordinateDistance
-        summary: max distance from center.
+        summary: max distance from center. (iOS only)
         type: Number
 
       - name: maxRegion
